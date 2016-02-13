@@ -15,4 +15,16 @@ module GroundControl
     Wemo.off(device)
   end
   
+  def self.on?(device)
+    Wemo.on?(device)
+  end
+  
+  def self.off?(device)
+    Wemo.off?
+  end
+  
+  def self.status(device)
+    Wemo.status(device)
+  end
+  
 end
