@@ -1,4 +1,5 @@
 require 'nokogiri'
+require 'playful/ssdp'
 require 'rest-client'
 
 module GroundControl
@@ -36,6 +37,28 @@ module GroundControl
         return 'off'
       end
     end
+    
+    def self.search
+      devices = []
+      Playful::SSDP.search("urn:Belkin:device:lightswitch:1").each do |device|
+        xml = Nokogiri.XML(RestClient.get(device[:location]))
+        devices << {name: xml.at('friendlyName').text, model: xml.at('modelName').text, location: device[:location].sub('/setup.xml',''), xml: xml}
+      end
+      
+      Playful::SSDP.search("urn:Belkin:device:controllee:1").each do |device|
+        xml = Nokogiri.XML(RestClient.get(device[:location]))
+        devices << {name: xml.at('friendlyName').text, model: xml.at('modelName').text, location: device[:location].sub('/setup.xml',''), xml: xml}
+      end
+      
+      Playful::SSDP.search("urn:Belkin:device:sensors:1").each do |device|
+        xml = Nokogiri.XML(RestClient.get(device[:location]))
+        devices << {name: xml.at('friendlyName').text, model: xml.at('modelName').text, location: device[:location].sub('/setup.xml',''), xml: xml}
+      end
+      
+      devices
+    end
+    
+    
     
   end
     
